@@ -4,13 +4,8 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
-/*
-*   Work Flow
-*   1. get input entered by the user as a string - use buffer
-*   2. tokenize the input
-*   3. fork()
-*   4. execvp()
-*/
+
+
 void getcmd(char**);
 void tokenize(int* argc, char*** argv, char** cmd, char* delim);
 void reset(int* argc, char** cmd, char*** argv);
