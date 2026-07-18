@@ -2,11 +2,17 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "input.h"
 
-char*[] commands = {"cd"};
+char* commands[] = {"cd"};
 
-bool handleBuiltins(char** argv, int argc, char* cmd)
+bool is_builtin(char* cmd);
+void cd( char** argv, int argc);
+
+
+
+bool handleBuiltins(char** argv, int argc)
 {
 
     if( !is_builtin(argv[0]) ) return false;
@@ -46,7 +52,7 @@ void cd( char** argv, int argc)
 
 bool is_builtin(char* cmd)
 {
-    size = sizeof(commands) / sizeof(commands[0]);
+    int size = sizeof(commands) / sizeof(commands[0]);
 
     for(int i = 0 ; i < size; i++)
         if(strcmp(commands[i], cmd) == 0 )

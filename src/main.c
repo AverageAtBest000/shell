@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "parser.h"
 #include "input.h"
 #include "executor.h"
@@ -25,18 +26,18 @@ int main(void)
         getcmd(&cmd);        
         tokenize(&argc, &argv, &cmd, delim);
         
-        if(arc == 0 ){
+        if(argc == 0 ){
             reset(&argc, &cmd, &argv);
             continue;
         }
         
         if(strcmp(argv[0], "exit") == 0) return 0;
 
-        bool handled = handleBuiltins(&argv, &argc, &cmd);
+        bool handled = handleBuiltins(argv, argc);
 
        
         if(!handled){
-            execute(argv)
+            execute(&argv, &cmd, &argc);
         }
        
     
