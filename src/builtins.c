@@ -2,6 +2,20 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "input.h"
+
+char*[] commands = {"cd"};
+
+bool handleBuiltins(char** argv, int argc, char* cmd)
+{
+
+    if( !is_builtin(argv[0]) ) return false;
+
+    if(strcmp(argv[0], "cd") == 0 ) cd(argv, argc);
+    
+    return true;
+
+}
 
 void cd( char** argv, int argc)
 {
@@ -27,4 +41,16 @@ void cd( char** argv, int argc)
     if(chdir( argv[1] ) != 0 )
         perror("cd: Failed to change directory");
     
+}
+
+
+bool is_builtin(char* cmd)
+{
+    size = sizeof(commands) / sizeof(commands[0]);
+
+    for(int i = 0 ; i < size; i++)
+        if(strcmp(commands[i], cmd) == 0 )
+            return true;
+
+    return false;
 }

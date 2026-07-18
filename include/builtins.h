@@ -1,5 +1,5 @@
-#ifndef CD_H
-#define CD_H
+#ifndef BUILTINS_H
+#define BUILTINS_H
 
 void cd(char** argv, int argc);
 
