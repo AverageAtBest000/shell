@@ -13,13 +13,15 @@ void cd( char** argv, int argc)
     if(argc == 1){
 
         char* home = getenv("HOME");
-        if(home == NULL) perror("Could not find HOME enviroment variable");
-
-        if(chdir(home) != 0 ){
-
-            perror("cd: Failed to change directory");
         
-        }
+        if(home == NULL){
+            perror("Could not find HOME enviroment variable");
+            return;
+        } 
+
+        if(chdir(home) != 0 ) perror("cd: Failed to change directory");
+
+        return;
     }
 
     if(chdir( argv[1] ) != 0 )
