@@ -1,20 +1,20 @@
 CC = clang
-FLAGS = -Wextra -Wall
+FLAGS = -Wextra -Wall -Iinclude
 
-shell: main builtins executor input parser
-	$(CC) main builtins executor input parser -o shell
+shell: main.o builtins.o executor.o input.o parser.o
+	$(CC) main.o builtins.o executor.o input.o parser.o -o shell
 
-main: main.c  
-	$(CC) main.c -c main
+main.o: src/main.c  
+	$(CC) $(FLAGS) -c src/main.c
 
-builtins: builtins.c builtins.h
-	$(CC) builtins.c -c builtins
+builtins.o: src/builtins.c include/builtins.h
+	$(CC) $(FLAGS) -c src/builtins.c
 
-executor: executor.c executor.h
-	$(CC) executor.c -c executor
+executor.o: src/executor.c include/executor.h
+	$(CC) $(FLAGS) -c src/executor.c
 
-input: input.c input.h
-	$(CC) input.c -c input
+input.o: src/input.c include/input.h
+	$(CC) $(FLAGS) -c src/input.c
 
-parser: parser.c parser.h
-	$(CC) parser.c -c parser
+parser.o: src/parser.c include/parser.h
+	$(CC) $(FLAGS) -c src/parser.c
