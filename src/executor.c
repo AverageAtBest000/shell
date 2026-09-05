@@ -19,7 +19,7 @@ void execute(char*** argv, char** cmd, int* argc)
         int val = execvp((*argv)[0], *argv);
         if(val == -1) perror("Command fail");
     }else{  
-        waitpid(NULL);
+        waitpid(pid, NULL, 0);
     }
     
     reset(argc, cmd, argv);
