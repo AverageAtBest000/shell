@@ -13,11 +13,17 @@ void execute(char*** argv, char** cmd, int* argc)
     pid_t pid = fork();
                         
 
-    if(pid == -1 ) perror("Fork function fail");
+    if(pid == -1 ){
+      perror("Fork function fail");
+      return;
+    } 
     
     if(pid == 0 ){
         int val = execvp((*argv)[0], *argv);
-        if(val == -1) perror("Command fail");
+        if(val == -1) {
+            perror("Command fail");
+            return;
+        }
     }else{  
         waitpid(pid, NULL, 0);
     }
