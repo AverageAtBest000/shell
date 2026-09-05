@@ -39,6 +39,8 @@ int main(void)
         if(!handled){
             execute(&argv, &cmd, &argc);
         }
+
+        reset(&argc, &cmd, &argv);
        
     
     }

@@ -28,7 +28,5 @@ void execute(char*** argv, char** cmd, int* argc)
         waitpid(pid, NULL, 0);
     }
     
-    reset(argc, cmd, argv);
-
 }
  
