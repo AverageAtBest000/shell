@@ -6,7 +6,13 @@ void getcmd(char** cmd){
     printf("-> ");
     size_t n = 10;
     ssize_t numchar = getline(cmd, &n, stdin);
-    (*cmd)[numchar-1] = '\0';  
+    
+    if(numchar == -1){
+        perror("Error in getline() function");  
+        return;
+    } 
+
+    if((*cmd)[numchar - 1] == "\n") (*cmd)[numchar-1] = '\0';  
      
 }
 
