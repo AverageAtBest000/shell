@@ -12,7 +12,7 @@ void getcmd(char** cmd){
         return;
     } 
 
-    if((*cmd)[numchar - 1] == "\n") (*cmd)[numchar-1] = '\0';  
+    if( numchar > 0 && (*cmd)[numchar - 1] == "\n") (*cmd)[numchar-1] = '\0';  
      
 }
 
