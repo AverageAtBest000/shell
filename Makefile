@@ -4,7 +4,7 @@ FLAGS = -Wextra -Wall -Iinclude
 shell: main.o builtins.o executor.o input.o parser.o
 	$(CC) main.o builtins.o executor.o input.o parser.o -o shell
 
-main.o: src/main.c  
+main.o: src/main.c  builtins.h executor.h input.h parser.h
 	$(CC) $(FLAGS) -c src/main.c
 
 builtins.o: src/builtins.c include/builtins.h
