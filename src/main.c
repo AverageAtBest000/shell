@@ -17,7 +17,7 @@ int main(void)
 
     char* cmd = NULL;
     int argc = 0;                   
-    char** argv;
+    char** argv = NULL;
     char* delim = " ";
     ssize_t cmdReadResult;
     
@@ -26,9 +26,10 @@ int main(void)
         cmdReadResult = getcmd(&cmd);
 
         if( cmdReadResult == -1){
-            perror("Failed to get command");
+            reset(&argc, &cmd, &argv);
             continue;  
         }else if(cmdReadResult == 0){
+            reset(&argc, &cmd, &argv);
             return 0;
         }
     
