@@ -1,20 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int getcmd(char** cmd){
+ssize_t getcmd(char** cmd){
     
-    printf("-> ");
+    printf("❯ ");
     size_t n = 10;
     ssize_t numchar = getline(cmd, &n, stdin);
     
-    if(numchar == -1){
+    if(numchar == -1 && ferror(stdin)){
         perror("Error in getline() function");  
         return -1;
-    } 
+    } else if(feof(stdin)){
+        *(cmd) = "";
+        return 0;
+    }
 
     if( numchar > 0 && (*cmd)[numchar - 1] == '\n') (*cmd)[numchar-1] = '\0';  
     
-    return 0;
+    return numchar;
 }
 
 
