@@ -19,22 +19,24 @@ int main(void)
     int argc = 0;                   
     char** argv;
     char* delim = " ";
-
+    
     while (1)
     {
-
+        
         if(getcmd(&cmd) == -1)
-            perror("Failed to get command");        
-
+        perror("Failed to get command");        
+    
         tokenize(&argc, &argv, &cmd, delim);
         
         if(argc == 0 ){
             reset(&argc, &cmd, &argv);
             continue;
         }
-        
-        if(strcmp(argv[0], "exit") == 0) 
+
+        if(strcmp(argv[0], "exit") == 0){
+            reset(&argc, &cmd, &argv);
             return 0;
+        }
 
         bool handled = handleBuiltins(argv, argc);
 
