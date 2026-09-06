@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void getcmd(char** cmd){
+int getcmd(char** cmd){
     
     printf("-> ");
     size_t n = 10;
@@ -9,11 +9,12 @@ void getcmd(char** cmd){
     
     if(numchar == -1){
         perror("Error in getline() function");  
-        return;
+        return -1;
     } 
 
     if( numchar > 0 && (*cmd)[numchar - 1] == '\n') (*cmd)[numchar-1] = '\0';  
-     
+    
+    return 0;
 }
 
 

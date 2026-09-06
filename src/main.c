@@ -23,7 +23,9 @@ int main(void)
     while (1)
     {
 
-        getcmd(&cmd);        
+        if(getcmd(&cmd) == -1)
+            perror("Failed to get command");        
+
         tokenize(&argc, &argv, &cmd, delim);
         
         if(argc == 0 ){
@@ -31,7 +33,8 @@ int main(void)
             continue;
         }
         
-        if(strcmp(argv[0], "exit") == 0) return 0;
+        if(strcmp(argv[0], "exit") == 0) 
+            return 0;
 
         bool handled = handleBuiltins(argv, argc);
 
