@@ -19,13 +19,17 @@ int main(void)
     int argc = 0;                   
     char** argv;
     char* delim = " ";
+    ssize_t cmdReadResult;
     
     while (1)
     {
-        
-        if(getcmd(&cmd) == -1){
-            reset(&argc, &cmd, &argv);
-            perror("Failed to get command");        
+        cmdReadResult = getcmd(&cmd);
+
+        if( cmdReadResult == -1){
+            perror("Failed to get command");
+            continue;  
+        }else if(cmdReadResult == 0){
+            return 0;
         }
     
         tokenize(&argc, &argv, &cmd, delim);

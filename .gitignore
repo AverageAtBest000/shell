@@ -6,6 +6,7 @@
 *.ko
 *.obj
 *.elf
+shell
 
 # Linker output
 *.ilk
@@ -56,6 +57,3 @@ dkms.conf
 
 
 .vscode/
-
-
-shell
