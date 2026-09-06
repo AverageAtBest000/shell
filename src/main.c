@@ -23,8 +23,10 @@ int main(void)
     while (1)
     {
         
-        if(getcmd(&cmd) == -1)
-        perror("Failed to get command");        
+        if(getcmd(&cmd) == -1){
+            reset(&argc, &cmd, &argv);
+            perror("Failed to get command");        
+        }
     
         tokenize(&argc, &argv, &cmd, delim);
         
