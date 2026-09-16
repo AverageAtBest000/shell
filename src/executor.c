@@ -22,6 +22,7 @@ void execute(char*** argv, char** cmd, int* argc)
         int val = execvp((*argv)[0], *argv);
         if(val == -1) {
             perror("Command fail");
+            _exit(1);
             return;
         }
     }else{  
