@@ -28,7 +28,8 @@ void get_tokens(int* argc, char*** argv, char** cmd, char delim){
 
             if( i == strlen(cmd) && !(cmd[i] == delim) || (cmd[i] == delim && len(cur_tok) == 0 && !in_string) ){
                 (*argv)[j++] = cur_tok;
-                cur_tok[0] = '\0' ;
+                cur_tok[0] = '\0';
+                (*argc)++;
                 continue;
             }
 
