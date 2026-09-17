@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void tokenize(int* argc, char*** argv, char** cmd, char* delim)
+void tokenize(int* argc, char*** argv, char** cmd, char delim)
 {
     char* token;
 
@@ -15,7 +15,7 @@ void tokenize(int* argc, char*** argv, char** cmd, char* delim)
 }
 
 
-void get_tokens(int* argc, char*** argv, char* cmd){
+void get_tokens(int* argc, char*** argv, char** cmd){
 
         *argv = malloc((*argc + 1) * sizeof(char*));
 
@@ -40,7 +40,7 @@ void get_tokens(int* argc, char*** argv, char* cmd){
                 char* temp = realloc( cur_tok, len(cur_tok) + 2 )
                 temp[len(cur_tok)] = cmd[i];
                 temp[len(cur_tok) + 1] = '\0';
-                
+
                 if(temp != NULL) cur_tok = temp;
             }
 
@@ -48,19 +48,4 @@ void get_tokens(int* argc, char*** argv, char* cmd){
 
         free(cur_tok);
 
-}
-
-
-int count_tokens(int* argc, char* cmd, char* delim){
-
-
-    bool in_string = false; 
-
-    for(int i = 0; i < strlen(cmd); i++ ){
-
-        if(strcmp(cmd[i], '"') && !in_string) in_string = !in_string;
-        
-        if(strcmp(cmd[i], *delim) && !in_string) num_tok++;
-    }
-    return num_tok;
 }

@@ -18,7 +18,7 @@ int main(void)
     char* cmd = NULL;
     int argc = 0;                   
     char** argv = NULL;
-    char* delim = " ";
+    char delim = ' ';
     ssize_t cmdReadResult;
     
     while (1)
