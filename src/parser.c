@@ -36,10 +36,6 @@ int count_tokens(int* argc, char* cmd){
         if(strcmp(cmd[i], '"') && !in_string) !in_string
         
         if(strcmp(cmd[i], ' ') && !in_string) num_tok++;
-    
     }
-
     return num_tok;
-
-
 }
