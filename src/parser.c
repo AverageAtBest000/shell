@@ -3,9 +3,8 @@
 
 void tokenize(int* argc, char*** argv, char** cmd, char delim)
 {
-    char* token;
-
-    char* cmd_cpy = malloc(sizeof(char) * strlen(*cmd) + 1);
+    
+    get_tokens(argc, argv, cmd, delim);
 
     (*argv)[*argc] = NULL;
 
@@ -13,7 +12,7 @@ void tokenize(int* argc, char*** argv, char** cmd, char delim)
 }
 
 
-void get_tokens(int* argc, char*** argv, char** cmd){
+void get_tokens(int* argc, char*** argv, char** cmd, char delim){
 
         *argv = malloc((*argc + 1) * sizeof(char*));
 
@@ -27,13 +26,13 @@ void get_tokens(int* argc, char*** argv, char** cmd){
 
             if(cmd[i] == '"') in_string = !in_string;
 
-            if( i == strlen(cmd) && !(cmd[i] == ' ') || (cmd[i] == ' ' && len(cur_tok) == 0 && !in_string) ){
+            if( i == strlen(cmd) && !(cmd[i] == delim) || (cmd[i] == delim && len(cur_tok) == 0 && !in_string) ){
                 (*argv)[j++] = cur_tok;
                 cur_tok[0] = '\0' ;
                 continue;
             }
 
-            if(cmd[i] != ' ' || in_string){
+            if(cmd[i] != delim || in_string){
                 
                 char* temp = realloc( cur_tok, len(cur_tok) + 2 )
                 temp[len(cur_tok)] = cmd[i];
