@@ -9,9 +9,6 @@ void tokenize(int* argc, char*** argv, char** cmd, char* delim)
 
     strcpy(cmd_cpy , *cmd );
     
-    *argc = count_tokens(argc, cmd_cpy);
-
-    *argv = malloc((*argc + 1) * sizeof(char*));
     token = strtok(*cmd, delim);
 
     for(int i = 0 ; token ; i++)
@@ -33,7 +30,7 @@ int count_tokens(int* argc, char* cmd){
 
     for(int i = 0; i < strlen(cmd); i++ ){
 
-        if(strcmp(cmd[i], '"') && !in_string) !in_string
+        if(strcmp(cmd[i], '"') && !in_string) in_string = !in_string;
         
         if(strcmp(cmd[i], ' ') && !in_string) num_tok++;
     }
