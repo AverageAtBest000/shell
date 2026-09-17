@@ -7,8 +7,6 @@ void tokenize(int* argc, char*** argv, char** cmd, char delim)
 
     char* cmd_cpy = malloc(sizeof(char) * strlen(*cmd) + 1);
 
-    count_tokens(argc, cmd, delim);
-
     (*argv)[*argc] = NULL;
 
     free(cmd_cpy);
