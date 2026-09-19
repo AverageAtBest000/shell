@@ -1,41 +1,76 @@
-#include <string.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-void tokenize(int* argc, char*** argv, char** cmd, char* delim)
+static int get_tokens(int* argc, char*** argv, char** cmd, char delim);
+static int append_to_vector(char*** argv, int* argc, char* token);
+
+void tokenize(int* argc, char*** argv, char** cmd, char delim)
 {
-    char* token;
-
-    char* cmd_cpy = malloc(sizeof(char) * strlen(*cmd) + 1);
-
-    strcpy(cmd_cpy , *cmd );
-    
-    *argc = count_tokens(argc, cmd_cpy);
-
-    *argv = malloc((*argc + 1) * sizeof(char*));
-    token = strtok(*cmd, delim);
-
-    for(int i = 0 ; token ; i++)
-    {
-        (*argv)[i] = token;
-        token = strtok(NULL, delim);
+    if(get_tokens(argc, argv, cmd, delim) == -1){
+        perror("Failed to tokenize command");
     }
-
-    (*argv)[*argc] = NULL;
-
-    free(cmd_cpy);
 }
 
 
-int count_tokens(int* argc, char* cmd){
+static int get_tokens(int* argc, char*** argv, char** cmd, char delim)
+{
+    bool in_string = false;
+    bool token_started = false;
+    size_t i = 0;
+    size_t j = 0;
 
+    *argc = 0;
+    *argv = NULL;
 
-    bool in_string = false; 
+    while((*cmd)[i] != '\0'){
+        if((*cmd)[i] == '"'){
+            if(!token_started){
+                if(append_to_vector(argv, argc, &(*cmd)[j]) == -1)
+                    return -1;
+                token_started = true;
+            }
 
-    for(int i = 0; i < strlen(cmd); i++ ){
+            in_string = !in_string;
+            i++;
+            continue;
+        }
 
-        if(strcmp(cmd[i], '"') && !in_string) !in_string
-        
-        if(strcmp(cmd[i], ' ') && !in_string) num_tok++;
+        if((*cmd)[i] == delim && !in_string){
+            if(token_started){
+                (*cmd)[j++] = '\0';
+                token_started = false;
+            }
+
+            i++;
+            continue;
+        }
+
+        if(!token_started){
+            if(append_to_vector(argv, argc, &(*cmd)[j]) == -1)
+                return -1;
+            token_started = true;
+        }
+
+        (*cmd)[j++] = (*cmd)[i++];
     }
-    return num_tok;
+
+    if(token_started)
+        (*cmd)[j] = '\0';
+
+    return 0;
+}
+
+
+static int append_to_vector(char*** argv, int* argc, char* token)
+{
+    char** temp = realloc(*argv, (*argc + 2) * sizeof(char*));
+    if(temp == NULL) return -1;
+
+    *argv = temp;
+    (*argv)[*argc] = token;
+    (*argc)++;
+    (*argv)[*argc] = NULL;
+
+    return 0;
 }
