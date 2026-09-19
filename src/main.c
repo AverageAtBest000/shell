@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <termios.h>
 #include "parser.h"
 #include "input.h"
 #include "executor.h"
@@ -58,4 +59,20 @@ int main(void)
     }
     
     return 0;
+}
+
+int set_raw_terminal(){
+  struct termios old_attr, new_attr;
+
+  if(tcgetattr(STDIN_FILENO, &old_attr) != 0){
+    perror("tcgetattr() fail");
+    rerurn -1;
+  }
+
+  new_attr = old_attr;
+
+  if(tcsetattr())
+  
+
+
 }
