@@ -15,6 +15,8 @@
 
 int main(void)
 {
+    
+    set_raw_terminal();
 
     char* cmd = NULL;
     int argc = 0;                   
@@ -23,7 +25,7 @@ int main(void)
     ssize_t cmdReadResult;
     
     while (1)
-    {
+    {     
         cmdReadResult = getcmd(&cmd);
 
         if( cmdReadResult == -1){
@@ -70,8 +72,12 @@ int set_raw_terminal(){
   }
 
   new_attr = old_attr;
+  new_attr.c_lflag &= ~ICANON;
 
-  if(tcsetattr())
+  if(tcsetattr(STDIN_FILENO, TCSANOW, &new_attr) != 0){
+    perror("tcgetattr() fail");
+    return -1;
+  }
   
 
 
