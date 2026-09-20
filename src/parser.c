@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int get_tokens(int* argc, char*** argv, char** cmd, char delim);
+int get_tokens(int* argc, char*** argv, char** cmd, char delim);
 static int append_to_vector(char*** argv, int* argc, char* token);
 
 void tokenize(int* argc, char*** argv, char** cmd, char delim)
@@ -12,8 +12,7 @@ void tokenize(int* argc, char*** argv, char** cmd, char delim)
     }
 }
 
-
-static int get_tokens(int* argc, char*** argv, char** cmd, char delim)
+int get_tokens(int* argc, char*** argv, char** cmd, char delim)
 {
     bool in_string = false;
     bool token_started = false;
@@ -46,7 +45,7 @@ static int get_tokens(int* argc, char*** argv, char** cmd, char delim)
             continue;
         }
 
-        if(!token_started){
+        if(!token_started
             if(append_to_vector(argv, argc, &(*cmd)[j]) == -1)
                 return -1;
             token_started = true;

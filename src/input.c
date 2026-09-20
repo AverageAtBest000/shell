@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include "parser.h"
 
 ssize_t getcmd(char** cmd){
     
@@ -24,6 +25,21 @@ ssize_t getcmd(char** cmd){
     return numchar;
 }
 
+
+static int autocomplete(char* current_command){
+ 
+  int argc;
+  char** argv;
+   
+  
+
+  tokenize();
+
+
+  
+
+
+}
 
 void reset(int* argc, char** cmd, char*** argv)
 {
