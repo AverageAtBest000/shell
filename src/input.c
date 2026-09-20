@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <dirent.h>
+
 #include "parser.h"
 
 ssize_t getcmd(char** cmd){
@@ -26,19 +28,47 @@ ssize_t getcmd(char** cmd){
 }
 
 
-static int autocomplete(char* current_command){
+static int get_autocomplete_filepath(char* current_command){
  
   int argc;
-  char** argv;
+  char** argv
+
+  if( tokenize(&arc, &argv, &current_command, '') != 0){
+    perror("Failed to tokenize");
+    return -1;
+  }
+
+  char* to_auto = argv[sizeof(argv)/sizeof(argv[0]) - 1);
+  
+  DIR* current_dir;
+
+  if( (current_dir = opendir(".")) == NULL){
+    perror("Could not read current directory for autocomple");
+    return -1;
+  }
    
+  char** names = maloc(10*sizeof(char*));
+  struct dirent* entry;
+  int num_entries = 0;  
+
+  while( (entry = readdir(current_dir)) != NULL )
+  {
+    if(num_entries > sizeof(names)/ sizeof(char*)){
+      if(realloc(&num_entries, (sizeof(names)/ sizeof(char*)) * 2 ) == NULL){
+        perror("realloc fail during autocomple")
+        return -1;
+      }
+
+      names[num_entries] = entry->d_name;
+    }
+
+  }
+
+
+  closedir(current_dir); 
+
   
-
-  tokenize();
-
-
   
-
-
 }
 
 void reset(int* argc, char** cmd, char*** argv)
