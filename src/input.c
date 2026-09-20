@@ -47,7 +47,7 @@ static int get_autocomplete_filepath(char* current_command){
     return -1;
   }
    
-  char** names = maloc(10*sizeof(char*));
+  char** names = malloc(10*sizeof(char*));
   struct dirent* entry;
   int num_entries = 0;  
 
@@ -67,8 +67,17 @@ static int get_autocomplete_filepath(char* current_command){
 
   closedir(current_dir); 
 
+  int entries = sizeof(names)/ sizeof(char*); 
+  int scores[entries];
+
+  for(int i = 0; i < entries; i++){
+
+    for(int j = 0; j < strlen(to_auto); j++){
+      if(to_auto[j] == names[i][j]) scores[i]++; 
+    } 
   
-  
+  }
+
 }
 
 void reset(int* argc, char** cmd, char*** argv)
