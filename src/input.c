@@ -10,7 +10,6 @@ static int[] score( char** names, int entries);
 static int* get_max_indeces(int[] scores);
 static int get_autocomplete_filepath(char* current_command, char** filepath);
 
-
 ssize_t getcmd(char** cmd){
     
     printf("❯ ");
@@ -76,7 +75,9 @@ static int get_autocomplete_filepath(char* current_command, char** filepath  ){
   closedir(current_dir); 
   
   int entries = sizeof(names)/ sizeof(char*); 
-  score(names, entries);
+  int scores[entries];
+
+  score(names, entries, scores);
  
   // just pick the first filepath for now 
   int* max_indeces = get_max_indeces(scores); 
@@ -89,7 +90,7 @@ static int get_autocomplete_filepath(char* current_command, char** filepath  ){
 
 }
 
-static int* get_max_indeces(int[] scores){
+static int* get_max_indeces(int* scores){
   int max_score = 0;
   int* max_indeces; 
 
@@ -114,9 +115,8 @@ static int* get_max_indeces(int[] scores){
 }
 
 
-static int[] score(char** names, int entries){
+static void score(char** names, int entries, int[] scores){
   
-  int scores[entries];
 
   for(int i = 0; i < entries; i++){
 
