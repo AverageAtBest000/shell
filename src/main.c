@@ -11,12 +11,16 @@
 #include "executor.h"
 #include "builtins.h"
 
-
+static int set_raw_terminal();
 
 int main(void)
 {
-    
-    set_raw_terminal();
+  
+    if(set_raw_terminal() != 0 ){
+        perror("could not set_raw_terminal mode");
+        return -1;
+    }
+
 
     char* cmd = NULL;
     int argc = 0;                   
@@ -57,18 +61,18 @@ int main(void)
 
         reset(&argc, &cmd, &argv);
        
-    
+     
     }
     
     return 0;
 }
 
-int set_raw_terminal(){
+ static int set_raw_terminal(){
   struct termios old_attr, new_attr;
 
   if(tcgetattr(STDIN_FILENO, &old_attr) != 0){
     perror("tcgetattr() fail");
-    rerurn -1;
+    return -1;
   }
 
   new_attr = old_attr;
@@ -79,6 +83,6 @@ int set_raw_terminal(){
     return -1;
   }
   
-
+  return 0; 
 
 }
