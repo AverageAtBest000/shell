@@ -25,6 +25,10 @@ int main(void)
         return -1;
     }
 
+    if(set_cannonical_terminal(&old_attr) != 0){
+      return -1;
+    }
+
 
     char* cmd = NULL;
     int argc = 0;                   
