@@ -21,13 +21,9 @@ int main(void)
     struct termios old_attr, new_attr;
   
     if(set_raw_terminal(&old_attr, &new_attr) != 0 ){
-        perror("could not set_raw_terminal mode");
         return -1;
     }
 
-    if(set_cannonical_terminal(&old_attr) != 0){
-      return -1;
-    }
 
 
     char* cmd = NULL;
@@ -72,13 +68,17 @@ int main(void)
      
     }
     
+    if(set_cannonical_terminal(&old_attr) != 0){    
+      return -1;
+    }
+    
     return 0;
 }
 
  static int set_raw_terminal( struct termios* old_attr, struct termios*  new_attr){
 
   if(tcgetattr(STDIN_FILENO, old_attr) != 0){
-    perror("tcgetattr() fail");
+    perror("Fail in tcgetattr(). Could not fetch current terminal attributes");
     return -1;
   }
 
@@ -86,7 +86,7 @@ int main(void)
   new_attr->c_lflag &= ~ICANON;
 
   if(tcsetattr(STDIN_FILENO, TCSANOW, new_attr) != 0){
-    perror("tcgetattr() fail");
+    perror("Fail in tcsetattr(). Could not go to cannonical mode");
     return -1;
   }
   
@@ -98,7 +98,7 @@ static int set_cannonical_terminal(struct termios* old_attr ){
  
 
   if(tcsetattr(STDIN_FILENO, TCSANOW, old_attr) != 0){
-    perror("Failed to return to cannonical mode");
+    perror("Fail in tcsetattr(). Could not return to cannonical mode");
     return -1;  
   }
 
