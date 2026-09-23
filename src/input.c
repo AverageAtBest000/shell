@@ -6,9 +6,10 @@
 
 #include "parser.h"
 
-static int[] score( char** names, int entries);
-static int* get_max_indeces(int[] scores);
+static int get_max_indeces(int* scores, int entries,  int** max_indeces);
 static int get_autocomplete_filepath(char* current_command, char** filepath);
+static int score(char** names, char* to_auto, int entries, int** scores);
+static int get_dir_names( char*** names, int* entries);
 
 ssize_t getcmd(char** cmd){
     
@@ -25,7 +26,7 @@ ssize_t getcmd(char** cmd){
             return -1;
         }
         
-    } 
+     } 
 
     if( numchar > 0 && (*cmd)[numchar - 1] == '\n') (*cmd)[numchar-1] = '\0';  
     
@@ -43,9 +44,43 @@ static int get_autocomplete_filepath(char* current_command, char** filepath  ){
   //   return -1;
   // }
   //
-  tokenize(&argc, &argv, &current_command, ' ');
+  char* current_command_copy;
+  if(strcpy(current_command_copy, current_command) != 0 ){
+    perror("Failed to copy current_command");
+    return -1;
+  }
+
+  tokenize(&argc, &argv, &current_command_copy, ' ');
  
   char* to_auto = argv[ argc - 1];
+
+  int entries;
+  char** names;
+  get_dir_names(&names, &entries);
+
+  int* scores;
+
+  if(  score(names, to_auto, entries, &scores) != 0){
+    perror("fail in score() function");
+    return - 1;
+  }
+ 
+  // just pick the first filepath for now 
+  int* max_indeces;
+
+  if(get_max_indeces(scores, entries, &max_indeces) != 0){
+    perror("fail in get_max_indeces() function"); 
+    return -1;  
+  } 
+  
+  *filepath = NULL;
+  
+  *filepath = names[max_indeces[0]];
+  
+
+}
+
+static int get_dir_names( char*** names, int* entries){
   
   DIR* current_dir;
 
@@ -54,69 +89,61 @@ static int get_autocomplete_filepath(char* current_command, char** filepath  ){
     return -1;
   }
    
-  char** names = malloc(10*sizeof(char*));
+
+  *names = malloc(sizeof(char*));
+
   struct dirent* entry;
-  int num_entries = 0;  
+  *entries = 0;  
 
   while( (entry = readdir(current_dir)) != NULL )
   {
-    if(num_entries > sizeof(names)/ sizeof(char*)){
-      if(realloc(&num_entries, (sizeof(names)/ sizeof(char*)) * 2 ) == NULL){
+      if(realloc(names, *entries + 1  ) == NULL){
         perror("realloc fail during autocomple");
         return -1;
       }
 
-      names[num_entries] = entry->d_name;
-    }
-
+      *names[*entries] = entry->d_name;
+      (*entries) ++; 
   }
 
-
   closedir(current_dir); 
-  
-  int entries = sizeof(names)/ sizeof(char*); 
-  int scores[entries];
-
-  score(names, entries, scores);
- 
-  // just pick the first filepath for now 
-  int* max_indeces = get_max_indeces(scores); 
-  
-  *filepath = NULL;
-  
-  *filepath = names[max_indeces[0]];
-
   
 
 }
 
-static int* get_max_indeces(int* scores){
+
+static int get_max_indeces(int* scores, int entries,  int** max_indeces){
   int max_score = 0;
-  int* max_indeces; 
 
   for(int i = 0; i < entries; i++)
   {
     if(scores[i] > max_score || max_score == scores[i]){
       
       max_score = scores[i];
-      int* temp = realloc(max_indeces, sizeof(max_indeces) + sizeof(int*));
+      int* temp = realloc(max_indeces, entries);
+      entries++;
       
       if(temp == NULL){
-        perror("realloc() faliure in get_max_indeces() function"
-        return NULL;
+        perror("realloc() faliure in get_max_indeces() function");
+        return -1;
       }
 
       temp[sizeof(temp) / sizeof(int*)] = i;
+
+     *max_indeces = temp; 
     }
   }
 
-  return max_indeces;
-
+  return 0;
 }
 
 
-static void score(char** names, int entries, int[] scores){
+static int score(char** names, char* to_auto, int entries, int** scores){
   
+  if(*scores = malloc(entries * sizeof(int))){
+    perror("Malloc fail in score()");
+    return -1;
+  }
 
   for(int i = 0; i < entries; i++){
 
@@ -124,11 +151,10 @@ static void score(char** names, int entries, int[] scores){
       
       if(to_auto[j] == names[i][j]) scores[i]++;
       else continue;
-    } 
-  
+    }  
   }
 
-  return scores;
+  return 0;
 }
 
 
