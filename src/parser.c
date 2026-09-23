@@ -45,7 +45,7 @@ int get_tokens(int* argc, char*** argv, char** cmd, char delim)
             continue;
         }
 
-        if(!token_started
+        if(!token_started){
             if(append_to_vector(argv, argc, &(*cmd)[j]) == -1)
                 return -1;
             token_started = true;
