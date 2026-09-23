@@ -33,6 +33,10 @@ ssize_t getcmd(char** cmd){
     return numchar;
 }
 
+ssize_t get_cmd_autocomplete(){
+  return 0;
+}
+
 
 static int get_autocomplete_filepath(char* current_command, char** filepath  ){
  
