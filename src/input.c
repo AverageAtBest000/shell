@@ -33,7 +33,11 @@ ssize_t getcmd(char** cmd){
     return numchar;
 }
 
-ssize_t get_cmd_autocomplete(){
+ssize_t get_cmd_autocomplete(char** cmd){
+  printf("❯ ");
+  
+
+
   return 0;
 }
 
