@@ -12,6 +12,8 @@
 #include "builtins.h"
 
 static int set_raw_terminal( struct termios* old_attr, struct termios* new_attr);
+static int set_cannonical_terminal(struct termios* old_attr);
+
 
 int main(void)
 {
@@ -88,8 +90,14 @@ int main(void)
 
 }
 
-static int set_cannonical_terminal(struct termios* old_attr, struct termios*  new_attr){
-  
+static int set_cannonical_terminal(struct termios* old_attr ){
+ 
+
+  if(tcsetattr(STDIN_FILENO, TCSANOW, old_attr) != 0){
+    perror("Failed to return to cannonical mode");
+    return -1;  
+  }
+
  return 0;  
 
 }
