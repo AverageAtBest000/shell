@@ -14,6 +14,7 @@ static int get_dir_names( char*** names, int* entries);
 ssize_t getcmd(char** cmd){
     
     printf("❯ ");
+    
     size_t n = 10;
     ssize_t numchar = getline(cmd, &n, stdin);
     
@@ -38,6 +39,7 @@ ssize_t get_cmd_autocomplete(char** cmd){
   
 
 
+
   return 0;
 }
 
@@ -49,7 +51,7 @@ static int get_autocomplete_filepath(char* current_command, char** filepath  ){
 
   // if( tokenize(&argc, &argv, &current_command, ' ') != 0){
   //   perror("Failed to tokenize");
-  //   return -1;
+  //   return -1; 
   // }
   //
   char* current_command_copy;

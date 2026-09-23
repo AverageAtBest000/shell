@@ -11,12 +11,14 @@
 #include "executor.h"
 #include "builtins.h"
 
-static int set_raw_terminal();
+static int set_raw_terminal( struct termios* old_attr, struct termios* new_attr);
 
 int main(void)
 {
+      
+    struct termios old_attr, new_attr;
   
-    if(set_raw_terminal() != 0 ){
+    if(set_raw_terminal(&old_attr, &new_attr) != 0 ){
         perror("could not set_raw_terminal mode");
         return -1;
     }
@@ -67,22 +69,27 @@ int main(void)
     return 0;
 }
 
- static int set_raw_terminal(){
-  struct termios old_attr, new_attr;
+ static int set_raw_terminal( struct termios* old_attr, struct termios*  new_attr){
 
-  if(tcgetattr(STDIN_FILENO, &old_attr) != 0){
+  if(tcgetattr(STDIN_FILENO, old_attr) != 0){
     perror("tcgetattr() fail");
     return -1;
   }
 
-  new_attr = old_attr;
-  new_attr.c_lflag &= ~ICANON;
+  *new_attr = *old_attr;
+  new_attr->c_lflag &= ~ICANON;
 
-  if(tcsetattr(STDIN_FILENO, TCSANOW, &new_attr) != 0){
+  if(tcsetattr(STDIN_FILENO, TCSANOW, new_attr) != 0){
     perror("tcgetattr() fail");
     return -1;
   }
   
   return 0; 
+
+}
+
+static int set_cannonical_terminal(struct termios* old_attr, struct termios*  new_attr){
+  
+ return 0;  
 
 }
