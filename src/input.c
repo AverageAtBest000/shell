@@ -34,7 +34,7 @@ ssize_t get_cmd_cannonical(char** cmd){
     return numchar;
 }
 
-ssize_t get_cmd_noncannnical(char** cmd){
+ssize_t get_cmd_noncannonical(char** cmd){
   
   printf("❯ ");
 
@@ -45,8 +45,9 @@ ssize_t get_cmd_noncannnical(char** cmd){
     perror("Failiure in malloc(). Could not allocate space for cmd");
     return -1;
   }
+
   char ch;
-  int num_char = 0;
+  ssize_t num_char = 1;
 
   // read() will return a \r once the user hits Enter
   while((*cmd)[num_char - 1] != '\r'){
@@ -67,11 +68,11 @@ ssize_t get_cmd_noncannnical(char** cmd){
     }
 
 
-    (*cmd)[num_char] = ch;
+    (*cmd)[num_char - 1] = ch;
     num_char++;
   }
 
-    return 0;
+  return num_char - 1;
 }
 
 
