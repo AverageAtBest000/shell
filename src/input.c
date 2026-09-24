@@ -69,14 +69,17 @@ ssize_t get_cmd_noncannonical(char** cmd){
     }
 
     if(ch == '\n' || ch == '\r'){
+      (*cmd)[num_char] = '\0';
       break; 
     }  
 
     num_char++;
-    (*cmd)[num_char - 1] = ch;
+    (*cmd)[num_char] = ch;
   }
+  
 
-  return num_char - 1;
+
+  return num_char + 1;
 }
 
 
