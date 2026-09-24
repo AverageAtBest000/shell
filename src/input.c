@@ -37,7 +37,7 @@ ssize_t get_cmd_cannonical(char** cmd){
 ssize_t get_cmd_noncannonical(char** cmd){
   
   printf("❯ ");
-  fflush(STDOUT);
+  fflush(stdout);
 
   int capacity = 16;
   *cmd = malloc(sizeof(char*) * capacity);
@@ -48,10 +48,10 @@ ssize_t get_cmd_noncannonical(char** cmd){
   }
 
   char ch;
-  ssize_t num_char = 1;
+  ssize_t num_char = 0;
 
   // read() will return a \r once the user hits Enter
-  while((*cmd)[num_char - 1] != '\r'){
+  while((*cmd)[num_char - 1] != '\n'){
      
     if(read(STDIN_FILENO, &ch, 1 ) == -1){
       perror("Error in read() operation"); 
@@ -68,9 +68,8 @@ ssize_t get_cmd_noncannonical(char** cmd){
 
     }
 
-
-    (*cmd)[num_char - 1] = ch;
     num_char++;
+    (*cmd)[num_char - 1] = ch;
   }
 
   return num_char - 1;
