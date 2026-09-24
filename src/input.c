@@ -37,6 +37,7 @@ ssize_t get_cmd_cannonical(char** cmd){
 ssize_t get_cmd_noncannonical(char** cmd){
   
   printf("❯ ");
+  fflush(STDOUT);
 
   int capacity = 16;
   *cmd = malloc(sizeof(char*) * capacity);
