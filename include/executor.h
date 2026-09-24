@@ -1,6 +1,4 @@
-#ifndef EXECTUTOR_H
-#define EXECTUTOR_H
+#pragma once
 
 void execute(char*** argv, char** cmd, int* argc);
 
-#endif
