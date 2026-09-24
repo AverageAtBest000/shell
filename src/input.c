@@ -68,7 +68,7 @@ ssize_t get_cmd_noncannonical(char** cmd){
       return -1;
     }
 
-    if(ch == '\n' || ch == \r){
+    if(ch == '\n' || ch == '\r'){
       break; 
     }  
 
