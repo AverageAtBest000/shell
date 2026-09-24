@@ -34,7 +34,7 @@ int main(void)
     
     while (1)
     {     
-        cmdReadResult = getcmd(&cmd);
+        cmdReadResult = get_cmd_cannonical(&cmd);
 
         if( cmdReadResult == -1){
             reset(&argc, &cmd, &argv);

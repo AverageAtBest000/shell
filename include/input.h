@@ -1,7 +1,6 @@
-#ifndef INPUT_H
-#define INPUT_H
+#pragma once
 
-ssize_t getcmd(char** cmd);
+ssize_t get_cmd_cannonical(char** cmd);
+ssize_t get_cmd_cannonical(char** cmd);
 void reset(int* argc, char** cmd, char*** argv);
 
-#endif
