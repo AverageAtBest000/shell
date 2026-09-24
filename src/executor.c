@@ -4,7 +4,8 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <errno.h>
+#include <sys/wait.h>
 #include "input.h"
 
 
@@ -21,7 +22,9 @@ void execute(char*** argv, char** cmd, int* argc)
     if(pid == 0 ){
         int val = execvp((*argv)[0], *argv);
         if(val == -1) {
-            perror("Command fail");
+            
+            // Remove for debug perror("Command fail"); 
+            fprintf(stderr, "Command fail: Command is the following : %s: %s\n", (*argv)[0], strerror(errno));
             _exit(1);
             return;
         }

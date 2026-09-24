@@ -24,8 +24,6 @@ int main(void)
         return -1;
     }
 
-
-
     char* cmd = NULL;
     int argc = 0;                   
     char** argv = NULL;
@@ -34,7 +32,7 @@ int main(void)
     
     while (1)
     {     
-        cmdReadResult = get_cmd_cannonical(&cmd);
+        cmdReadResult = get_cmd_noncannonical(&cmd);
 
         if( cmdReadResult == -1){
             reset(&argc, &cmd, &argv);
