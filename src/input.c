@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <string.h>
-
+#include <unistd.h>
 #include "parser.h"
 
 static int get_max_indeces(int* scores, int entries,  int** max_indeces);
@@ -35,13 +35,19 @@ ssize_t get_cmd_cannonical(char** cmd){
 }
 
 ssize_t get_cmd_noncannnical(char** cmd){
+  
   printf("❯ ");
-    
+
   int capacity = 16;
   *cmd = malloc(sizeof(char*) * capacity);
+
+  if( *cmd == NULL ){
+    perror("Failiure in malloc(). Could not allocate space for cmd");
+    return -1;
+  }
   char ch;
   int num_char = 0;
-    
+
   // read() will return a \r once the user hits Enter
   while((*cmd)[num_char - 1] != '\r'){
      
@@ -51,7 +57,7 @@ ssize_t get_cmd_noncannnical(char** cmd){
     }
       
     if(num_char >= capacity){
-      if(realloc(*char, capacity*2) == NULL){
+      if(realloc(*cmd, capacity*2) == NULL){
         perror("Failiure in realloc(). Could not allocate command buffer");
         return -1;
       } 
@@ -61,7 +67,7 @@ ssize_t get_cmd_noncannnical(char** cmd){
     }
 
 
-    (*char)[num_char] = ch;
+    (*cmd)[num_char] = ch;
     num_char++;
   }
 
@@ -174,8 +180,9 @@ static int get_max_indeces(int* scores, int entries,  int** max_indeces){
 
 
 static int score(char** names, char* to_auto, int entries, int** scores){
+  *scores = malloc(entries * sizeof(int));
   
-  if(*scores = malloc(entries * sizeof(int))){
+  if(*scores == NULL){
     perror("Malloc fail in score()");
     return -1;
   }
