@@ -11,7 +11,7 @@ static int get_autocomplete_filepath(char* current_command, char** filepath);
 static int score(char** names, char* to_auto, int entries, int** scores);
 static int get_dir_names( char*** names, int* entries);
 
-ssize_t getcmd(char** cmd){
+ssize_t get_cmd_cannonical(char** cmd){
     
     printf("❯ ");
     
@@ -34,13 +34,38 @@ ssize_t getcmd(char** cmd){
     return numchar;
 }
 
-ssize_t get_cmd_autocomplete(char** cmd){
+ssize_t get_cmd_noncannnical(char** cmd){
   printf("❯ ");
-  
+    
+  int capacity = 16;
+  *cmd = malloc(sizeof(char*) * capacity);
+  char ch;
+  int num_char = 0;
+    
+  // read() will return a \r once the user hits Enter
+  while((*cmd)[num_char - 1] != '\r'){
+     
+    if(read(STDIN_FILENO, &ch, 1 ) == -1){
+      perror("Error in read() operation"); 
+      return -1;
+    }
+      
+    if(num_char >= capacity){
+      if(realloc(*char, capacity*2) == NULL){
+        perror("Failiure in realloc(). Could not allocate command buffer");
+        return -1;
+      } 
+        
+      capacity *= 2;
 
-  
+    }
 
-  return 0;
+
+    (*char)[num_char] = ch;
+    num_char++;
+  }
+
+    return 0;
 }
 
 
