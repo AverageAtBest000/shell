@@ -51,22 +51,26 @@ ssize_t get_cmd_noncannonical(char** cmd){
   ssize_t num_char = 0;
 
   // read() will return a \r once the user hits Enter
-  while((*cmd)[num_char - 1] != '\n'){
-     
-    if(read(STDIN_FILENO, &ch, 1 ) == -1){
-      perror("Error in read() operation"); 
-      return -1;
-    }
-      
+  while(1){
+   
     if(num_char >= capacity){
       if(realloc(*cmd, capacity*2) == NULL){
         perror("Failiure in realloc(). Could not allocate command buffer");
         return -1;
       } 
-        
+
       capacity *= 2;
 
     }
+     
+    if(read(STDIN_FILENO, &ch, 1 ) == -1){
+      perror("Error in read() operation"); 
+      return -1;
+    }
+
+    if(ch == '\n' || ch == \r){
+      break; 
+    }  
 
     num_char++;
     (*cmd)[num_char - 1] = ch;
