@@ -38,7 +38,7 @@ ssize_t get_cmd_autocomplete(char** cmd){
   printf("❯ ");
   
 
-
+  
 
   return 0;
 }

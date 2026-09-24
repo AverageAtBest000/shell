@@ -75,7 +75,8 @@ int main(void)
     return 0;
 }
 
- static int set_raw_terminal( struct termios* old_attr, struct termios*  new_attr){
+
+static int set_raw_terminal( struct termios* old_attr, struct termios*  new_attr){
 
   if(tcgetattr(STDIN_FILENO, old_attr) != 0){
     perror("Fail in tcgetattr(). Could not fetch current terminal attributes");
