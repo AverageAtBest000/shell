@@ -84,6 +84,8 @@ static int set_raw_terminal( struct termios* old_attr, struct termios*  new_attr
   *new_attr = *old_attr;
   new_attr->c_lflag &= ~ICANON;
 
+  new_attr->c_lflag &= ~ECHO;
+
   if(tcsetattr(STDIN_FILENO, TCSANOW, new_attr) != 0){
     perror("Fail in tcsetattr(). Could not go to cannonical mode");
     return -1;
