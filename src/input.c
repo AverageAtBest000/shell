@@ -71,8 +71,20 @@ ssize_t get_cmd_noncannonical(char** cmd){
     if(ch == '\n' || ch == '\r'){
       (*cmd)[num_char] = '\0';
       break; 
-    }  
+    } 
 
+    if(ch == '\b' || ch == 8 || ch == 127) {
+      if(num_char > 0){
+        num_char --;
+        if(write(STDOUT_FILENO, "\033[D \033[D", 7) == -1){
+          perror("Error in write() operation"); 
+          return -1;
+        }
+      }
+      continue;
+    }
+
+    write(STDOUT_FILENO, &ch, 1);
     (*cmd)[num_char] = ch;
     num_char++;
   }
