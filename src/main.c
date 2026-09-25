@@ -53,6 +53,9 @@ int main(void)
             reset(&argc, &cmd, &argv);
             return 0;
         }
+    
+        write( STDOUT_FILENO, "\n", 1);
+             
 
         bool handled = handleBuiltins(argv, argc);
 

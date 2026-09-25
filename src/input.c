@@ -88,10 +88,7 @@ ssize_t get_cmd_noncannonical(char** cmd){
     (*cmd)[num_char] = ch;
     num_char++;
   }
-  
-
-
-  return num_char + 1;
+  return num_char;
 }
 
 
