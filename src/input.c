@@ -60,9 +60,7 @@ ssize_t get_cmd_noncannonical(char** cmd){
         perror("Failiure in realloc(). Could not allocate command buffer");
         return -1;
       } 
-
       capacity *= 2;
-
     }
      
     if(read(STDIN_FILENO, &ch, 1 ) == -1){
@@ -82,8 +80,6 @@ ssize_t get_cmd_noncannonical(char** cmd){
           return -1; 
         }
       }
-
-
       continue;
     }
     
@@ -106,7 +102,6 @@ static int delete_from_userin( int num_chars){
       perror("Error in write() operation"); 
       return -1;
     }
-    
   }
 }
 
@@ -145,10 +140,7 @@ static int get_autocomplete_filepath(char* current_command, char** filepath  ){
   } 
   
   *filepath = NULL;
-  
   *filepath = names[max_indeces[0]];
-  
-
 }
 
 static int get_dir_names( char*** names, int* entries){
@@ -177,9 +169,7 @@ static int get_dir_names( char*** names, int* entries){
       (*entries) ++; 
   }
 
-  closedir(current_dir); 
-  
-
+  closedir(current_dir);  
 }
 
 
