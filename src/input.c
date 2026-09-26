@@ -10,6 +10,8 @@ static int get_max_indeces(int* scores, int entries,  int** max_indeces);
 static int get_autocomplete_filepath(char* current_command, char** filepath);
 static int score(char** names, char* to_auto, int entries, int** scores);
 static int get_dir_names( char*** names, int* entries);
+static int delete_from_userin(int num_chars);
+
 
 ssize_t get_cmd_cannonical(char** cmd){
     
@@ -76,13 +78,19 @@ ssize_t get_cmd_noncannonical(char** cmd){
     if(ch == '\b' || ch == 8 || ch == 127) {
       if(num_char > 0){
         num_char --;
-        if(write(STDOUT_FILENO, "\033[D \033[D", 7) == -1){
-          perror("Error in write() operation"); 
-          return -1;
+        if(delete_from_userin(1) == -1){
+          return -1; 
         }
       }
+
+
       continue;
     }
+    
+    if(ch == '\t' || ch == 9){
+      
+    }
+
 
     write(STDOUT_FILENO, &ch, 1);
     (*cmd)[num_char] = ch;
@@ -92,16 +100,21 @@ ssize_t get_cmd_noncannonical(char** cmd){
 }
 
 
+static int delete_from_userin( int num_chars){
+  while(num_chars --> 0 ){
+    if(write(STDOUT_FILENO, "\033[D \033[D", 7) == -1){
+      perror("Error in write() operation"); 
+      return -1;
+    }
+    
+  }
+}
+
 static int get_autocomplete_filepath(char* current_command, char** filepath  ){
  
   int argc;
   char** argv;
 
-  // if( tokenize(&argc, &argv, &current_command, ' ') != 0){
-  //   perror("Failed to tokenize");
-  //   return -1; 
-  // }
-  //
   char* current_command_copy;
   if(strcpy(current_command_copy, current_command) != 0 ){
     perror("Failed to copy current_command");
