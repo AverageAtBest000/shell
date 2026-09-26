@@ -37,13 +37,15 @@ int main(void)
         if( cmdReadResult == -1){
             reset(&argc, &cmd, &argv);
             continue;  
-        }else if(cmdReadResult == 0){
-            reset(&argc, &cmd, &argv);
-            return 0;
         }
+        // else if(cmdReadResult == 0){
+        //     reset(&argc, &cmd, &argv);
+        //     return 0;
+        // }
     
         tokenize(&argc, &argv, &cmd, delim);
         
+        write( STDOUT_FILENO, "\n", 1);
         if(argc == 0 ){
             reset(&argc, &cmd, &argv);
             continue;
@@ -54,7 +56,6 @@ int main(void)
             return 0;
         }
     
-        write( STDOUT_FILENO, "\n", 1);
              
 
         bool handled = handleBuiltins(argv, argc);
