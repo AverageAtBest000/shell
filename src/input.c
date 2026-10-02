@@ -41,8 +41,8 @@ ssize_t get_cmd_noncannonical(char** cmd){
   printf("❯ ");
   fflush(stdout);
 
-  int capacity = 16;
-  *cmd = malloc(sizeof(char*) * capacity);
+  int capacity = 256;
+  *cmd = malloc(sizeof(char) * capacity);
 
   if( *cmd == NULL ){
     perror("Failiure in malloc(). Could not allocate space for cmd");
@@ -56,7 +56,8 @@ ssize_t get_cmd_noncannonical(char** cmd){
   while(1){
    
     if(num_char >= capacity){
-      if(realloc(*cmd, capacity*2) == NULL){
+      char* temp = realloc(*cmd, capacity*2); 
+      if(temp == NULL){
         perror("Failiure in realloc(). Could not allocate command buffer");
         return -1;
       } 
@@ -96,9 +97,15 @@ ssize_t get_cmd_noncannonical(char** cmd){
 
       delete_from_userin(to_delete);
       num_char -= to_delete;
-      (*cmd)[num_char] = '\0';
-      
+      // (*cmd)[num_char] = '\0';
+
       size_t to_write = strlen(filepath);
+      
+      char* null_adress = *cmd + num_char ;
+
+      memcpy(null_adress, filepath, to_write + 1 );
+      num_char += to_write; 
+      
       write(STDOUT_FILENO, filepath, to_write);
       continue;
     }
