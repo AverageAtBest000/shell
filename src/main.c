@@ -1,4 +1,5 @@
 #define DS_C_IMPLEMENTATION
+
 #include "builtins.h"
 #include "executor.h"
 #include "input.h"
@@ -13,14 +14,22 @@
 #include <termios.h>
 #include <unistd.h>
 
+DS_DEFINE_ARRAY(int, ds_int_array, NULL, NULL)
+
 static int set_raw_terminal(struct termios *old_attr, struct termios *new_attr);
 static int set_cannonical_terminal(struct termios *old_attr);
 
 int main(void) {
+  ds_int_array *arr = ds_int_array_create(10);
+  if (arr == NULL) {
+    fprintf(stderr, "Could not initialize integer array\n");
+    return EXIT_FAILURE;
+  }
 
   struct termios old_attr, new_attr;
 
   if (set_raw_terminal(&old_attr, &new_attr) != 0) {
+    ds_int_array_destroy(arr);
     return -1;
   }
 
@@ -52,7 +61,7 @@ int main(void) {
 
     if (strcmp(argv[0], "exit") == 0) {
       reset(&argc, &cmd, &argv);
-      return 0;
+      break;
     }
 
     bool handled = handleBuiltins(argv, argc);
@@ -63,6 +72,8 @@ int main(void) {
 
     reset(&argc, &cmd, &argv);
   }
+
+  ds_int_array_destroy(arr);
 
   if (set_cannonical_terminal(&old_attr) != 0) {
     return -1;

@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 
 project(shell LANGUAGES C)
 
-add_executable(shell src/main.c src/builtins.c src/executor.c src/input.c src/parser.c)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_executable(shell src/main.c src/builtins.c src/executor.c src/input/input.c src/parser.c)
 
 include(FetchContent)
 
@@ -13,7 +15,6 @@ FetchContent_Declare(libds-c
 FetchContent_MakeAvailable(libds-c)
 
 target_link_libraries(shell PRIVATE libds-c::libds-c)
-
 
 target_include_directories(shell PRIVATE include)
 
