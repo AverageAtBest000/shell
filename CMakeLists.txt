@@ -12,7 +12,7 @@ FetchContent_Declare(libds-c
 )
 FetchContent_MakeAvailable(libds-c)
 
-target_link_libraries(your_target PRIVATE libds-c::libds-c)
+target_link_libraries(shell PRIVATE libds-c::libds-c)
 
 
 target_include_directories(shell PRIVATE include)
