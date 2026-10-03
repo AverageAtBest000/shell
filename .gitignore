@@ -58,3 +58,4 @@ dkms.conf
 # cmake
 CMakeFiles/
 CMakeCache.txt
+build/
