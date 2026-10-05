@@ -4,7 +4,7 @@ project(shell LANGUAGES C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(shell src/main.c src/builtins.c src/executor.c src/input/input.c src/parser.c)
+add_executable(shell src/main.c src/builtins.c src/executor.c src/input/input.c src/input/completion.c src/input/handlers.c src/parser.c)
 
 include(FetchContent)
 

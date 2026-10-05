@@ -2,7 +2,7 @@
 
 #include "builtins.h"
 #include "executor.h"
-#include "input.h"
+#include "input/input.h"
 #include "parser.h"
 #include <libds_c.h>
 #include <stdbool.h>
