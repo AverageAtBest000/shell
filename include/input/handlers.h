@@ -1,5 +1,8 @@
 #pragma once
+#include "ds_string.h"
 #include <sys/types.h>
 
-int handle_backspace(ssize_t *num_char);
-int handle_tab(ssize_t *num_char, char **cmd);
+struct ds_string;
+
+int handle_backspace(ds_string cmd);
+int handle_tab(ds_string *cmd);
