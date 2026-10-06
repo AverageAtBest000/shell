@@ -1,5 +1,8 @@
 #pragma once
+#include "ds_string.h"
 #include <sys/types.h>
 
-int get_autocomplete_filepath(char *current_command, char **filepath,
+struct ds_string;
+
+int get_autocomplete_filepath(ds_string cmd, char **filepath,
                               size_t *to_delete);

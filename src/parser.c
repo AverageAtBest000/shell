@@ -1,59 +1,69 @@
+#include "ds_common.h"
+#include "ds_string.h"
+#include <stdatomic.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-int get_tokens(int *argc, char ***argv, char **cmd, char delim);
+int get_tokens(int *argc, char ***argv, ds_string *cmd, char delim);
 static int append_to_vector(char ***argv, int *argc, char *token);
 
-void tokenize(int *argc, char ***argv, char **cmd, char delim) {
-  if (get_tokens(argc, argv, cmd, delim) == -1) {
-    perror("Failed to tokenize command");
+int tokenize(int *argc, char ***argv, ds_string *cmd, char delim) {
+  if (get_tokens(argc, argv, cmd, delim) != 0) {
+    return -1;
   }
+
+  return 0;
 }
 
-int get_tokens(int *argc, char ***argv, char **cmd, char delim) {
+/*
+ * @brief Splits a ds_string based on a delimeter
+ *
+ * @param argc Counter for the number of tokens
+ * @param argv Argument vector containing pointers to the tokens
+ * @param cmd Command to tokenize
+ * @param delim The delimeter to split by
+ *
+ * @return 0 on succes
+ */
+int get_tokens(int *argc, char ***argv, ds_string *cmd, char delim) {
+
+  int i = 0;
+  char ch;
   bool in_string = false;
   bool token_started = false;
-  size_t i = 0;
-  size_t j = 0;
+  ds_string token;
+  if (ds_string_init(&token, "") != DS_STATUS_OK) {
+    return -1;
+  }
 
-  *argc = 0;
-  *argv = NULL;
+  ch = cmd->data[i++];
+  while (ch != '\0') {
 
-  while ((*cmd)[i] != '\0') {
-    if ((*cmd)[i] == '"') {
-      if (!token_started) {
-        if (append_to_vector(argv, argc, &(*cmd)[j]) == -1)
-          return -1;
-        token_started = true;
-      }
+    ch = cmd->data[i++];
 
+    if (ch == '"' || ch == '\'') {
       in_string = !in_string;
       i++;
       continue;
     }
 
-    if ((*cmd)[i] == delim && !in_string) {
+    if (ch == delim && !in_string) {
       if (token_started) {
-        (*cmd)[j++] = '\0';
-        token_started = false;
+        append_to_vector(argv, argc, token.data);
       }
 
+      token_started = false;
+      ds_string_clear(&token);
       i++;
       continue;
     }
 
-    if (!token_started) {
-      if (append_to_vector(argv, argc, &(*cmd)[j]) == -1)
-        return -1;
-      token_started = true;
+    if (ds_string_append_char(&token, ch) != DS_STATUS_OK) {
+      return -1;
     }
-
-    (*cmd)[j++] = (*cmd)[i++];
+    token_started = true;
   }
 
-  if (token_started)
-    (*cmd)[j] = '\0';
+  ds_string_deinit(&token);
 
   return 0;
 }
