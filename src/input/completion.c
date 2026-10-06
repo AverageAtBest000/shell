@@ -1,58 +1,68 @@
 #include "input/completion.h"
+#include "ds_array.h"
+#include "ds_common.h"
+#include "ds_string.h"
 #include <dirent.h>
 #include <parser.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static int get_dir_names(char ***names, int *entries);
-static int score(char **names, char *to_auto, int entries, int **scores);
-static int get_max_indeces(int *scores, int entries, int **max_indeces);
+DS_DEFINE_ARRAY(int, ds_int_array, NULL, NULL)
 
-int get_autocomplete_filepath(char *current_command, char **filepath,
+static int get_dir_names(ds_array *dir_names);
+static int get_max_indeces(ds_int_array scores, ds_int_array *max_indeces);
+static void cleanup_string(void *element);
+static int score(ds_array *dir_names, char *to_auto, ds_int_array *scores);
+
+int get_autocomplete_filepath(ds_string cmd, char **filepath,
                               size_t *to_delete) {
 
   int argc;
   char **argv;
 
-  char *current_command_copy = strdup(current_command);
-
-  if (current_command_copy == NULL) {
-    perror("faliure in strdup");
-    return -1;
-  }
-
-  tokenize(&argc, &argv, &current_command_copy, ' ');
+  tokenize(&argc, &argv, cmd, ' ');
 
   char *to_auto = argv[argc - 1];
   *to_delete = strlen(to_auto);
 
-  int entries;
-  char **names;
-  get_dir_names(&names, &entries);
+  ds_array dir_names;
+  if (ds_array_init(&dir_names, 8, sizeof(ds_string), cleanup_string, NULL) !=
+      DS_STATUS_OK) {
+    return -1;
+  }
 
-  int *scores;
+  get_dir_names(&dir_names);
 
-  if (score(names, to_auto, entries, &scores) != 0) {
-    perror("fail in score() function");
+  ds_int_array scores;
+  if (ds_int_array_init(&scores, 8) != DS_STATUS_OK) {
+    ds_array_deinit(&dir_names);
+    return -1;
+  }
+
+  if (score(&dir_names, to_auto, &scores) != 0) {
     return -1;
   }
 
   // just pick the first filepath for now
-  int *max_indeces = NULL;
+  ds_int_array max_indeces;
+  if (ds_int_array_init(&max_indeces, 8) != DS_STATUS_OK) {
+    return -1;
+  }
 
-  if (get_max_indeces(scores, entries, &max_indeces) != 0) {
-    perror("fail in get_max_indeces() function");
+  if (get_max_indeces(scores, &max_indeces) != 0) {
     return -1;
   }
 
   *filepath = NULL;
+  int score = ds_int_array_init(&max_indeces, 0);
   *filepath = names[max_indeces[0]];
 
   return 0;
 }
 
-static int get_dir_names(char ***names, int *entries) {
+static int get_dir_names(ds_array *dir_names) {
 
   DIR *current_dir;
 
@@ -61,21 +71,12 @@ static int get_dir_names(char ***names, int *entries) {
     return -1;
   }
 
-  *names = malloc(sizeof(char *));
-
   struct dirent *entry;
-  *entries = 0;
 
   while ((entry = readdir(current_dir)) != NULL) {
-    char **temp = realloc(*names, (*entries + 1) * sizeof **names);
-    if (temp == NULL)
-      return -1;
-    *names = temp;
-
-    (*names)[*entries] = strdup(entry->d_name);
-    if ((*names)[*entries] == NULL)
-      return -1;
-    (*entries)++;
+    ds_string name;
+    ds_string_init(&name, entry->d_name);
+    ds_array_push(dir_names, &name);
   }
 
   closedir(current_dir);
@@ -83,55 +84,43 @@ static int get_dir_names(char ***names, int *entries) {
   return 0;
 }
 
-static int get_max_indeces(int *scores, int entries, int **max_indeces) {
+static int get_max_indeces(ds_int_array scores, ds_int_array *max_indeces) {
   int max_score = 0;
-  int num_max_scores = 0;
 
-  int capacity = 16;
-  *max_indeces = malloc(capacity * sizeof(int));
-
-  for (int i = 0; i < entries; i++) {
-    if (scores[i] > max_score)
-      max_score = scores[i];
+  for (size_t i = 0; i < scores.length; i++) {
+    int score = ds_int_array_get(&scores, i);
+    if (score > max_score)
+      max_score = score;
   }
 
-  for (int i = 0; i < entries; i++) {
-    if (max_score == scores[i]) {
-      if (capacity == num_max_scores) {
-        int *temp =
-            realloc(*max_indeces, sizeof(max_indeces[0]) * capacity * 2);
-        capacity *= 2;
-        if (temp == NULL)
-          perror("realloc() fail for max_indeces");
-
-        *max_indeces = temp;
-      }
-
-      (*max_indeces)[num_max_scores++] = i;
+  for (size_t i = 0; i < scores.length; i++) {
+    int score = ds_int_array_get(&scores, i);
+    if (max_score == score) {
+      ds_int_array_push(max_indeces, i);
     }
   }
 
   return 0;
 }
 
-static int score(char **names, char *to_auto, int entries, int **scores) {
-  *scores = calloc(entries, sizeof(int));
+static int score(ds_array *dir_names, char *to_auto, ds_int_array *scores) {
 
-  if (*scores == NULL) {
-    perror("Malloc fail in score()");
-    return -1;
-  }
+  for (size_t i = 0; i < dir_names->length; i++) {
+    int num = 0;
+    ds_string *dir_name = ds_array_get(dir_names, i);
+    for (size_t j = 0; to_auto[j] && dir_name->data[j]; j++) {
 
-  for (size_t i = 0; i < entries; i++) {
-
-    for (size_t j = 0; to_auto[j] && names[i][j]; j++) {
-
-      if (to_auto[j] != names[i][j])
+      if (to_auto[j] != dir_name->data[j])
         break;
 
-      (*scores)[i]++;
+      num++;
+    }
+    if (ds_int_array_push(scores, num) != DS_STATUS_OK) {
+      return -1;
     }
   }
 
   return 0;
 }
+
+static void cleanup_string(void *element) { ds_string_deinit(element); }

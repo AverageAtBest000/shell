@@ -1,39 +1,32 @@
 #define DS_C_IMPLEMENTATION
-
 #include "builtins.h"
+#include "ds_string.h"
 #include "executor.h"
 #include "input/input.h"
 #include "parser.h"
 #include <libds_c.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <termios.h>
 #include <unistd.h>
 
-DS_DEFINE_ARRAY(int, ds_int_array, NULL, NULL)
-
 static int set_raw_terminal(struct termios *old_attr, struct termios *new_attr);
 static int set_cannonical_terminal(struct termios *old_attr);
 
 int main(void) {
-  ds_int_array *arr = ds_int_array_create(10);
-  if (arr == NULL) {
-    fprintf(stderr, "Could not initialize integer array\n");
-    return EXIT_FAILURE;
-  }
 
   struct termios old_attr, new_attr;
 
   if (set_raw_terminal(&old_attr, &new_attr) != 0) {
-    ds_int_array_destroy(arr);
     return -1;
   }
 
-  char *cmd = NULL;
+  // char *cmd = NULL;
+  ds_string cmd;
+
   int argc = 0;
   char **argv = NULL;
   char delim = ' ';
@@ -46,10 +39,6 @@ int main(void) {
       reset(&argc, &cmd, &argv);
       continue;
     }
-    // else if(cmdReadResult == 0){
-    //     reset(&argc, &cmd, &argv);
-    //     return 0;
-    // }
 
     tokenize(&argc, &argv, &cmd, delim);
 
@@ -72,8 +61,6 @@ int main(void) {
 
     reset(&argc, &cmd, &argv);
   }
-
-  ds_int_array_destroy(arr);
 
   if (set_cannonical_terminal(&old_attr) != 0) {
     return -1;

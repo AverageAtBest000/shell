@@ -1,3 +1,4 @@
+#include "ds_string.h"
 #include "input/handlers.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,32 +31,24 @@ ssize_t get_cmd_cannonical(char **cmd) {
   return numchar;
 }
 
-ssize_t get_cmd_noncannonical(char **cmd) {
+ssize_t get_cmd_noncannonical(ds_string *cmd) {
 
   printf("❯ ");
   fflush(stdout);
   int capacity = 256;
-  *cmd = malloc(sizeof(char) * capacity);
 
-  if (*cmd == NULL) {
-    perror("Failiure in malloc(). Could not allocate space for cmd");
-    return -1;
-  }
+  ds_string_init(cmd, "");
+
+  //
+  // if (*cmd == NULL) {
+  //   perror("Failiure in malloc(). Could not allocate space for cmd");
+  //   return -1;
+  // }
 
   char ch;
-  ssize_t num_char = 0;
 
   // read() will return a \r once the user hits Enter
   while (1) {
-
-    if (num_char >= capacity) {
-      char *temp = realloc(*cmd, capacity * 2);
-      if (temp == NULL) {
-        perror("Failiure in realloc(). Could not allocate command buffer");
-        return -1;
-      }
-      capacity *= 2;
-    }
 
     if (read(STDIN_FILENO, &ch, 1) == -1) {
       perror("Error in read() operation");
@@ -63,7 +56,6 @@ ssize_t get_cmd_noncannonical(char **cmd) {
     }
 
     if (ch == '\n' || ch == '\r') {
-      (*cmd)[num_char] = '\0';
       break;
     }
 
