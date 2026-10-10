@@ -1,4 +1,5 @@
 #pragma once
+#include "ds_string.h"
+struct ds_string;
 
-void tokenize(int *argc, char ***argv, char **cmd, char delim);
-int get_tokens(int *argc, char ***argv, char **cmd, char delim);
+int tokenize(int *argc, char ***argv, ds_string *cmd, char delim);

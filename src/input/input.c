@@ -1,3 +1,4 @@
+#include "ds_string.h"
 #include "input/handlers.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,32 +31,17 @@ ssize_t get_cmd_cannonical(char **cmd) {
   return numchar;
 }
 
-ssize_t get_cmd_noncannonical(char **cmd) {
+ssize_t get_cmd_noncannonical(ds_string *cmd) {
 
   printf("❯ ");
   fflush(stdout);
-  int capacity = 256;
-  *cmd = malloc(sizeof(char) * capacity);
 
-  if (*cmd == NULL) {
-    perror("Failiure in malloc(). Could not allocate space for cmd");
-    return -1;
-  }
+  ds_string_init(cmd, "");
 
   char ch;
-  ssize_t num_char = 0;
 
   // read() will return a \r once the user hits Enter
   while (1) {
-
-    if (num_char >= capacity) {
-      char *temp = realloc(*cmd, capacity * 2);
-      if (temp == NULL) {
-        perror("Failiure in realloc(). Could not allocate command buffer");
-        return -1;
-      }
-      capacity *= 2;
-    }
 
     if (read(STDIN_FILENO, &ch, 1) == -1) {
       perror("Error in read() operation");
@@ -63,25 +49,23 @@ ssize_t get_cmd_noncannonical(char **cmd) {
     }
 
     if (ch == '\n' || ch == '\r') {
-      (*cmd)[num_char] = '\0';
       break;
     }
 
     if (ch == '\b' || ch == 8 || ch == 127) {
-      handle_backspace(&num_char);
+      handle_backspace(cmd);
       continue;
     }
 
-    if ((ch == '\t' || ch == 9) && num_char != 0) {
-      handle_tab(&num_char, cmd);
+    if ((ch == '\t' || ch == 9) && cmd->length != 0) {
+      handle_tab(cmd);
       continue;
     }
 
     write(STDOUT_FILENO, &ch, 1);
-    (*cmd)[num_char] = ch;
-    num_char++;
+    ds_string_append_char(cmd, ch);
   }
-  return num_char;
+  return cmd->length;
 }
 
 int delete_from_userin(int num_chars) {
@@ -95,11 +79,12 @@ int delete_from_userin(int num_chars) {
   return 0;
 }
 
-void reset(int *argc, char **cmd, char ***argv) {
+void reset(int *argc, ds_string *cmd, char ***argv) {
+  for (int i = 0; i < *argc; i++)
+    free((*argv)[i]);
   *argc = 0;
 
-  free(*cmd);
-  *cmd = NULL;
+  ds_string_deinit(cmd);
 
   free(*argv);
   *argv = NULL;
