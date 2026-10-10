@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-void execute(char ***argv, char **cmd, int *argc) {
+void execute(char ***argv) {
   pid_t pid = fork();
 
   if (pid == -1) {
@@ -15,6 +15,8 @@ void execute(char ***argv, char **cmd, int *argc) {
 
   if (pid == 0) {
     int val = execvp((*argv)[0], *argv);
+    printf("exec reachhed");
+    fflush(stdout);
     if (val == -1) {
 
       // Remove for debug perror("Command fail");

@@ -4,5 +4,5 @@
 
 struct ds_string;
 
-int get_autocomplete_filepath(ds_string cmd, char **filepath,
+int get_autocomplete_filepath(ds_string *cmd, char **filepath,
                               size_t *to_delete);

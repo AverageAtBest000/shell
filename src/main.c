@@ -40,7 +40,10 @@ int main(void) {
       continue;
     }
 
-    tokenize(&argc, &argv, &cmd, delim);
+    if (tokenize(&argc, &argv, &cmd, delim) != 0) {
+      reset(&argc, &cmd, &argv);
+      continue;
+    }
 
     write(STDOUT_FILENO, "\n", 1);
     if (argc == 0) {
@@ -56,7 +59,7 @@ int main(void) {
     bool handled = handleBuiltins(argv, argc);
 
     if (!handled) {
-      execute(&argv, &cmd, &argc);
+      execute(&argv);
     }
 
     reset(&argc, &cmd, &argv);

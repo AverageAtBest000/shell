@@ -1,6 +1,6 @@
 #include "ds_common.h"
 #include "ds_string.h"
-#include <stdatomic.h>
+#include <string.h>
 #include <stdbool.h>
 
 int get_tokens(int *argc, char ***argv, ds_string *cmd, char delim);
@@ -35,32 +35,39 @@ int get_tokens(int *argc, char ***argv, ds_string *cmd, char delim) {
     return -1;
   }
 
-  ch = cmd->data[i++];
-  while (ch != '\0') {
+  while ((ch = cmd->data[i++]) != '\0') {
 
-    ch = cmd->data[i++];
-
-    if (ch == '"' || ch == '\'') {
+    if (ch == '"') {
+      // "" should be read as an empty argument
+      token_started = true;
       in_string = !in_string;
-      i++;
       continue;
     }
 
     if (ch == delim && !in_string) {
       if (token_started) {
-        append_to_vector(argv, argc, token.data);
+        if (append_to_vector(argv, argc, token.data) != 0) {
+          ds_string_deinit(&token);
+          return -1;
+        }
       }
 
       token_started = false;
       ds_string_clear(&token);
-      i++;
       continue;
     }
 
     if (ds_string_append_char(&token, ch) != DS_STATUS_OK) {
+      ds_string_deinit(&token);
       return -1;
     }
     token_started = true;
+  }
+
+  if (in_string || (token_started &&
+                    append_to_vector(argv, argc, token.data) != 0)) {
+    ds_string_deinit(&token);
+    return -1;
   }
 
   ds_string_deinit(&token);
@@ -74,7 +81,9 @@ static int append_to_vector(char ***argv, int *argc, char *token) {
     return -1;
 
   *argv = temp;
-  (*argv)[*argc] = token;
+  (*argv)[*argc] = strdup(token);
+  if ((*argv)[*argc] == NULL)
+    return -1;
   (*argc)++;
   (*argv)[*argc] = NULL;
 

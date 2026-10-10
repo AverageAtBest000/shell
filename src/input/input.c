@@ -35,15 +35,8 @@ ssize_t get_cmd_noncannonical(ds_string *cmd) {
 
   printf("❯ ");
   fflush(stdout);
-  int capacity = 256;
 
   ds_string_init(cmd, "");
-
-  //
-  // if (*cmd == NULL) {
-  //   perror("Failiure in malloc(). Could not allocate space for cmd");
-  //   return -1;
-  // }
 
   char ch;
 
@@ -60,20 +53,19 @@ ssize_t get_cmd_noncannonical(ds_string *cmd) {
     }
 
     if (ch == '\b' || ch == 8 || ch == 127) {
-      handle_backspace(&num_char);
+      handle_backspace(cmd);
       continue;
     }
 
-    if ((ch == '\t' || ch == 9) && num_char != 0) {
-      handle_tab(&num_char, cmd);
+    if ((ch == '\t' || ch == 9) && cmd->length != 0) {
+      handle_tab(cmd);
       continue;
     }
 
     write(STDOUT_FILENO, &ch, 1);
-    (*cmd)[num_char] = ch;
-    num_char++;
+    ds_string_append_char(cmd, ch);
   }
-  return num_char;
+  return cmd->length;
 }
 
 int delete_from_userin(int num_chars) {
@@ -87,11 +79,12 @@ int delete_from_userin(int num_chars) {
   return 0;
 }
 
-void reset(int *argc, char **cmd, char ***argv) {
+void reset(int *argc, ds_string *cmd, char ***argv) {
+  for (int i = 0; i < *argc; i++)
+    free((*argv)[i]);
   *argc = 0;
 
-  free(*cmd);
-  *cmd = NULL;
+  ds_string_deinit(cmd);
 
   free(*argv);
   *argv = NULL;
